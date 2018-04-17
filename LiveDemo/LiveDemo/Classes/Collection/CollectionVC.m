@@ -33,10 +33,11 @@
 
 @property (nonatomic, assign) VTCompressionSessionRef encodingSession;
 @property (nonatomic, assign) CMFormatDescriptionRef format;
-@property (nonatomic, strong) NSFileHandle *fileHandle;
 
 @property (nonatomic, assign) dispatch_queue_t captureQueue;
 @property (nonatomic, assign) dispatch_queue_t encoderQueue;
+
+@property (nonatomic, strong) NSFileHandle *fileHandle;
 
 @end
 
@@ -49,6 +50,11 @@
     
     self.captureQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     self.encoderQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    NSString *file = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"xbcs.h264"];
+    [[NSFileManager defaultManager] removeItemAtPath:file error:nil];
+    [[NSFileManager defaultManager] createFileAtPath:file contents:nil attributes:nil];
+    self.fileHandle = [NSFileHandle fileHandleForWritingAtPath:file];
     
     [self createCapture];
     [self createEncoder];
@@ -69,8 +75,82 @@
 
 #pragma mark VTCompressionOutputCallback
 
-void didCompressionOutputCallback(void *outuptCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer) {
+void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer) {
     
+    if (status != 0) {
+        return;
+    }
+    
+    if (!CMSampleBufferDataIsReady(sampleBuffer)) {
+        return;
+    }
+    
+    CollectionVC *encoder = (__bridge CollectionVC *)outputCallbackRefCon;
+    
+    bool keyFrame = !CFDictionaryContainsKey(CFArrayGetValueAtIndex(CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true), 0), kCMSampleAttachmentKey_NotSync);
+    
+    // 判断当前帧是否为关键帧
+    // 获取SPS & PPS 数据
+    if (keyFrame)
+    {
+        
+        CMFormatDescriptionRef format = CMSampleBufferGetFormatDescription(sampleBuffer);
+        
+        size_t sParameterSetSize, sParameterSetCount;
+        
+        const uint8_t *sParameterSet;
+        
+        OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 0, &sParameterSet, &sParameterSetSize, &sParameterSetCount, 0);
+        
+        if (statusCode == noErr)
+        {
+            // 查找sps 检测pps
+            size_t pParameterSetSize, pParameterSetCount;
+            const uint8_t *pParameterSet;
+            OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 1, &pParameterSet, &pParameterSetSize, &pParameterSetCount, 0);
+            
+            if (statusCode == noErr)
+            {
+//                查找pps
+                NSData *sps = [NSData dataWithBytes:sParameterSet length:sParameterSetSize];
+                NSData *pps = [NSData dataWithBytes:pParameterSet length:pParameterSetSize];
+                
+                if (encoder) {
+                    [encoder gotSps:sps pps:pps];
+                }
+            }
+        }
+    }
+    
+    CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+    size_t length, totalLength;
+    char *dataPointer;
+    OSStatus sta = CMBlockBufferGetDataPointer(dataBuffer, 0, &length, &totalLength, &dataPointer);
+    
+    if (sta == noErr) {
+        size_t bufferOffset = 0;
+        //
+        static const int AVCCHeaderLength = 4;
+        
+        // 循环获取NALU数据
+        
+        while (bufferOffset < totalLength - AVCCHeaderLength) {
+            
+            uint32_t NALUnitLength = 0;
+            
+            memcpy(&NALUnitLength, dataPointer + bufferOffset, AVCCHeaderLength);
+            
+            NALUnitLength = CFSwapInt32BigToHost(NALUnitLength);
+            
+            NSData *data = [[NSData alloc] initWithBytes:(dataPointer + bufferOffset + AVCCHeaderLength) length:NALUnitLength];
+            
+            [encoder gotEncodedData:data isKeyFrame:keyFrame];
+            
+            bufferOffset += AVCCHeaderLength + NALUnitLength;
+            
+        }
+        
+    }
     
 }
 
@@ -224,7 +304,32 @@ void didCompressionOutputCallback(void *outuptCallbackRefCon, void *sourceFrameR
     NSLog(@"H264: SUCCEED with %d", (int)status);
 }
 
+- (void)gotSps:(NSData *)sps pps:(NSData *)pps {
+    
+    const char bytes[] = "\x00\x00\x00\x01";
+    size_t length = (sizeof bytes) - 1;
+    NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
+    
+    [self.fileHandle writeData:byteHeader];
+    [self.fileHandle writeData:sps];
+    [self.fileHandle writeData:byteHeader];
+    [self.fileHandle writeData:pps];
+    
+}
 
+- (void)gotEncodedData:(NSData *)data isKeyFrame:(BOOL)isKeyFrame {
+    
+    if (self.fileHandle != NULL) {
+        
+        const char bytes[] = "\x00\x00\x00\x01";
+        size_t length = (sizeof bytes) - 1;
+        NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
+        [self.fileHandle writeData:byteHeader];
+        [self.fileHandle writeData:data];
+    }
+    
+    
+}
 
 
 
