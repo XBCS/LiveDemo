@@ -137,10 +137,8 @@
 		C52AAEE2207B51A8002FD4BF /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-
 				C5070E40207DFC1F00AAD1FB /* Collection */,
 				C5070E41207DFC2700AAD1FB /* Player */,
-
 				C52AAEE4207B51A8002FD4BF /* ViewController.h */,
 				C52AAEE3207B51A8002FD4BF /* ViewController.m */,
 			);
@@ -684,9 +682,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = LiveDemo/PrefixHeader.pch;
 				INFOPLIST_FILE = LiveDemo/Info.plist;
-
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -708,9 +704,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = LiveDemo/PrefixHeader.pch;
 				INFOPLIST_FILE = LiveDemo/Info.plist;
-
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

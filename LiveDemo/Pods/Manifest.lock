@@ -1,3 +1,26 @@
-PODFILE CHECKSUM: 256e41010d834d93f470447ac7355a0039e7b6ff
+PODS:
+  - FFmpeg (2.8.3):
+    - FFmpeg/precompiled (= 2.8.3)
+  - FFmpeg/precompiled (2.8.3)
+  - GPUImage (0.1.7)
+  - ijkplayer (1.1.2)
+  - Masonry (1.1.0)
+  - ReactiveObjC (3.1.0)
+
+DEPENDENCIES:
+  - FFmpeg (~> 2.8.3)
+  - GPUImage (~> 0.1.7)
+  - ijkplayer (~> 1.1.2)
+  - Masonry (~> 1.1.0)
+  - ReactiveObjC (~> 3.1.0)
+
+SPEC CHECKSUMS:
+  FFmpeg: f1428c3b60b5f9e349fcd5d7878705cd7f9a26f6
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
+  ijkplayer: da342ca5262c25ed7166c5b73a94c1548496000e
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  ReactiveObjC: 2a38ea15335de4119d8b17caf1db1484f61db902
+
+PODFILE CHECKSUM: ab583a10076cbc7ca802b4583fcca9b6c81273c1
 
 COCOAPODS: 1.4.0
