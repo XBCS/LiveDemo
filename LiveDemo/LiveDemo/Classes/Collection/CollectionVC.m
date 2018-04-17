@@ -341,8 +341,10 @@ void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameR
         [self.captureSession removeInput:self.videoInput];
         [self.captureSession removeOutput:self.self.videoDataOutput];
         [self.captureSession removeOutput:self.self.audioDataOutput];
+        self.captureSession = nil;
     }
-    self.captureSession = nil;
+    [self.fileHandle closeFile];
+    self.fileHandle = NULL;
 }
 
 - (void)destroyEncoderSession {
