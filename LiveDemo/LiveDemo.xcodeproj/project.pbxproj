@@ -11,6 +11,7 @@
 		710D1634B6639AA860F1BA69 /* Pods_LiveDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 370254A987C7B734DC086AB5 /* Pods_LiveDemo.framework */; };
 		8140E9ECFFC7BA7E7200A19C /* Pods_LiveDemoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0078EC5EBC2B2861D119B742 /* Pods_LiveDemoTests.framework */; };
 		C5070E44207DFC4E00AAD1FB /* CollectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = C5070E43207DFC4E00AAD1FB /* CollectionVC.m */; };
+		C5070F29208D847500AAD1FB /* H264VideoEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = C5070F28208D847500AAD1FB /* H264VideoEncoder.m */; };
 		C52AAEE5207B51A8002FD4BF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C52AAEE3207B51A8002FD4BF /* ViewController.m */; };
 		C54C2068207B50BD006F7DE1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C54C2067207B50BD006F7DE1 /* AppDelegate.m */; };
 		C54C2070207B50C0006F7DE1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C54C206F207B50C0006F7DE1 /* Assets.xcassets */; };
@@ -46,6 +47,8 @@
 		C5070E3F207DAED700AAD1FB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		C5070E42207DFC4E00AAD1FB /* CollectionVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionVC.h; sourceTree = "<group>"; };
 		C5070E43207DFC4E00AAD1FB /* CollectionVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionVC.m; sourceTree = "<group>"; };
+		C5070F27208D847500AAD1FB /* H264VideoEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H264VideoEncoder.h; sourceTree = "<group>"; };
+		C5070F28208D847500AAD1FB /* H264VideoEncoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = H264VideoEncoder.m; sourceTree = "<group>"; };
 		C52AAEE3207B51A8002FD4BF /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		C52AAEE4207B51A8002FD4BF /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		C54C2063207B50BD006F7DE1 /* LiveDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,13 +137,39 @@
 			path = Player;
 			sourceTree = "<group>";
 		};
+		C5070F24208D82ED00AAD1FB /* H264EncodeManager */ = {
+			isa = PBXGroup;
+			children = (
+				C5070F25208D82ED00AAD1FB /* VideoEncoder */,
+				C5070F26208D82ED00AAD1FB /* AudioEncoder */,
+			);
+			path = H264EncodeManager;
+			sourceTree = "<group>";
+		};
+		C5070F25208D82ED00AAD1FB /* VideoEncoder */ = {
+			isa = PBXGroup;
+			children = (
+				C5070F27208D847500AAD1FB /* H264VideoEncoder.h */,
+				C5070F28208D847500AAD1FB /* H264VideoEncoder.m */,
+			);
+			path = VideoEncoder;
+			sourceTree = "<group>";
+		};
+		C5070F26208D82ED00AAD1FB /* AudioEncoder */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AudioEncoder;
+			sourceTree = "<group>";
+		};
 		C52AAEE2207B51A8002FD4BF /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				C5070E40207DFC1F00AAD1FB /* Collection */,
-				C5070E41207DFC2700AAD1FB /* Player */,
+				C5070F24208D82ED00AAD1FB /* H264EncodeManager */,
 				C52AAEE4207B51A8002FD4BF /* ViewController.h */,
 				C52AAEE3207B51A8002FD4BF /* ViewController.m */,
+				C5070E40207DFC1F00AAD1FB /* Collection */,
+				C5070E41207DFC2700AAD1FB /* Player */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -515,6 +544,7 @@
 				C54C2076207B50C0006F7DE1 /* main.m in Sources */,
 				C5070E44207DFC4E00AAD1FB /* CollectionVC.m in Sources */,
 				C54C2068207B50BD006F7DE1 /* AppDelegate.m in Sources */,
+				C5070F29208D847500AAD1FB /* H264VideoEncoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
