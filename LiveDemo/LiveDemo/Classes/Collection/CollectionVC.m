@@ -159,13 +159,10 @@ void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameR
         if ([self.videoDataOutput isEqual:captureOutput]) {
             
             [self encode:sampleBuffer];
-            // TODO : 发送数据.
-            
             
         } else if ([self.audioDataOutput isEqual:captureOutput]) {
             
-            
-            // TODO : 编码, 发送数据.
+            // TODO : 编码.
             
         }
     
@@ -241,7 +238,7 @@ void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameR
         int height = 640;
         
         /*
-         1. 创建Session
+         1. VTCompressionSessionCreate 创建压缩会话 Session
          
          参数1: 会话分配器,NULL为默认;
          参数2: 帧宽度, 单位像素;
@@ -286,18 +283,35 @@ void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameR
 }
 
 - (void)encode:(CMSampleBufferRef)sampleBuffer {
-    
-    CVImageBufferRef imageBuffer =CMSampleBufferGetImageBuffer(sampleBuffer);
+    // 1. 获取媒体数据中的imageBuffer.
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    // 2. 创建时间戳  参数1: value  参数2: 时间刻度.
     CMTime presentationTimeStamp = CMTimeMake(frameID++, 1000);
+    // 3. 声明编码状态信息Flags(此信息Flags非错误信息Flags)
     VTEncodeInfoFlags flags;
+    /* 4. VTCompressionSessionEncodeFrame 将帧呈现给压缩会话进行编码.
+     
+     参数1: 压缩会话.
+     参数2: 要压缩的视频帧的CVImageBuffer对象, 此对象引用计数不能为0.
+     参数3: 时间戳, 传递给会话的每个时间戳必须大于上一个时间戳.
+     参数4: 帧的持续呈现时间?  如果没有, 用kCMTimeInvalid初始化一个无效的CMTime.
+     参数5: 包含用于编码该帧的附加属性的键/值对, 改变之后, 会影响后续的编码帧.
+     参数6: 回传到输出回调函数的 sourceFrame值.
+     参数7: 编码状态信息指针
+     
+     */
     OSStatus status = VTCompressionSessionEncodeFrame(self.encodingSession, imageBuffer, presentationTimeStamp, kCMTimeInvalid, NULL, NULL, &flags);
     
     if (status != noErr) {
         
         NSLog(@"H264: FAILED with %d", (int)status);
+        // 1. 完成压缩后调用VTCompressionSessionInvalidate 使会话无效.
         VTCompressionSessionInvalidate(self.encodingSession);
+        // 2. 调用CFRelease释放压缩会话.
         CFRelease(self.encodingSession);
+        // 3. 指针置NULL;
         self.encodingSession = NULL;
+        
         return;
     }
     
@@ -305,7 +319,7 @@ void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameR
 }
 
 - (void)gotSps:(NSData *)sps pps:(NSData *)pps {
-    
+    // 每一帧的所有NALU数据前四个字节变成0x00 00 00 01之后再写入文件
     const char bytes[] = "\x00\x00\x00\x01";
     size_t length = (sizeof bytes) - 1;
     NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
@@ -320,7 +334,7 @@ void didCompressionOutputCallback(void *outputCallbackRefCon, void *sourceFrameR
 - (void)gotEncodedData:(NSData *)data isKeyFrame:(BOOL)isKeyFrame {
     
     if (self.fileHandle != NULL) {
-        
+        // 每一帧的所有NALU数据前四个字节变成0x00 00 00 01之后再写入文件
         const char bytes[] = "\x00\x00\x00\x01";
         size_t length = (sizeof bytes) - 1;
         NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
