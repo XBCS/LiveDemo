@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "CollectionVC.h"
+#import <objc/runtime.h>
 
 
 @interface ViewController ()
@@ -15,6 +16,9 @@
 
 @property (nonatomic, strong) UIButton *collection;
 @property (nonatomic, strong) UIButton *play;
+
+@property (nonatomic, copy) NSString *s;
+@property (nonatomic, weak) NSString *w;
 
 @end
 
@@ -26,10 +30,71 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    self.s = [NSString stringWithFormat:@"ssss"];
+//    self.w = self.s;
+//    self.s = nil;
+//    NSLog(@"%@",self.w);
+//    
+////    class_addIvar(<#Class  _Nullable __unsafe_unretained cls#>, <#const char * _Nonnull name#>, <#size_t size#>, <#uint8_t alignment#>, <#const char * _Nullable types#>)
+////    NSGetSizeAndAlignment(<#const char * _Nonnull typePtr#>, <#NSUInteger * _Nullable sizep#>, <#NSUInteger * _Nullable alignp#>)
+//    
+//    
+//    
+////    unsigned int numIvars;
+////    Ivar *vars = class_copyIvarList(NSClassFromString(@"UIView"), &numIvars);
+////
+////    NSString *key = nil;
+////
+////    for (int i =0; i < numIvars; i++) {
+////
+////        Ivar this = vars[i];
+////
+////        key = [NSString stringWithUTF8String:ivar_getName(this)];
+////        NSLog(@"variable name: %@", key);
+////        key = [NSString stringWithUTF8String:ivar_getTypeEncoding(this)];
+////        NSLog(@"variable type: %@", key);
+////    }
+////    free(vars);
+//    
+//    
+//    NSUInteger size;
+//    NSUInteger alignment;
+//    NSGetSizeAndAlignment("NSString", &size, &alignment);
+//    NSLog(@"%lu, %lu", size, alignment);
+//    NSGetSizeAndAlignment("*", &size, &alignment);
+//    NSLog(@"%lu, %lu", size, alignment);
+//    NSGetSizeAndAlignment("int", &size, &alignment);
+//    NSLog(@"%lu, %lu", size, alignment);
+//    
+////    Class c = objc_getClass("NSObject");
+//    
+//    
+//    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+//    
+//    for (int i = 0 ; i< 9999; i++) {
+//        
+//        @autoreleasepool{
+//        UITableView *view = [[UITableView alloc] initWithFrame:[UIScreen mainScreen].bounds style:UITableViewStylePlain];
+//        view.separatorColor = [UIColor redColor];
+//        }
+////        NSLog(@"%@", s);
+//    }
+//    CFAbsoluteTime link = CFAbsoluteTimeGetCurrent() - start;
+//    
+//    NSLog(@"%f", link*1000.0);
+//    
+    
+    
+    
     [self setUpLayout];
     
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    NSLog(@"%@", self.w);
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

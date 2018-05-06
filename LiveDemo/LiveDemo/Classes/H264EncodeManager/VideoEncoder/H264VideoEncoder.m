@@ -41,12 +41,12 @@
 - (instancetype)initWithDelegate:(id)delegate {
     
     if (self = [super init]) {
-        self.delegate = delegate;
-        self.encoderQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        _delegate = delegate;
+        _encoderQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         // 每一帧的所有NALU数据前四个字节变成0x00 00 00 01之后再写入文件
         const char bytes[] = "\x00\x00\x00\x01";
         size_t length = (sizeof bytes) - 1;
-        self.byteHeader = [NSData dataWithBytes:bytes length:length];
+        _byteHeader = [NSData dataWithBytes:bytes length:length];
     }
     return self;
 }
